@@ -6,8 +6,8 @@ Click here to learn more. http://go.microsoft.com/fwlink/?LinkId=518007
 const gulp = require('gulp');
 const zip = require('gulp-zip');
 
-gulp.task('artifact', () => {
-    return gulp.src('src\Hoppla.Deployer.Agent\bin\Release\*')
-		.pipe(zip('artiface.zip'))
+gulp.task('artifact', function(cb) {
+    return gulp.src('src/Hoppla.Deployer.Agent/bin/Release/*.exe')
+		.pipe(zip('artifact.zip'))
 		.pipe(gulp.dest('dist'));
 });

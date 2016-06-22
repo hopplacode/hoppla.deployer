@@ -29,3 +29,4 @@ PublishProfiles/
 *.log.txt
 .vs/
 node_modules/
+dist/
