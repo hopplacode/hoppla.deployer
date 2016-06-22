@@ -49,7 +49,7 @@ namespace Hoppla.Deployer.Agent
 
                 if (actionBundleExecutionResults.Any())
                 {
-                    var emailBody = Razor.Parse(Properties.Resources.StatusEmail, new EmailViewModel(actionBundleExecutionResults));
+                    var emailBody = Razor.Parse(Properties.Resource.StatusEmail, new EmailViewModel(actionBundleExecutionResults));
                     emailService.SendMail(applicationConfiguration.ReportEmailFromAdress, applicationConfiguration.ReportEmailRecipientAdress, "Deployment Report", emailBody);
 
                 }
