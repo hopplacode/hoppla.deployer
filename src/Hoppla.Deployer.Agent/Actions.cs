@@ -431,7 +431,7 @@ namespace Hoppla.Deployer.Agent
                 Fixes = new List<string>();
 
 
-                foreach (var row in notes.Split(new string[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries))
+                foreach (var row in notes.Split(new string[] { "\n", "\r\n" }, StringSplitOptions.RemoveEmptyEntries))
                 {
                     if (row.StartsWith("+"))
                         Additions.Add(row.TrimStart('+').Trim());
