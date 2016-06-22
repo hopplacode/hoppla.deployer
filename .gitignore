@@ -28,3 +28,4 @@ PublishProfiles/
 *.vspx
 *.log.txt
 .vs/
+node_modules/
