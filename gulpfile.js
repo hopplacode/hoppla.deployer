@@ -7,7 +7,9 @@ const gulp = require('gulp');
 const zip = require('gulp-zip');
 
 gulp.task('artifact', function(cb) {
-    return gulp.src(['src/Hoppla.Deployer.Agent/bin/Release/*Agent.exe', 'src/Hoppla.Deployer.Agent/bin/Release/*.dll'])
+    return gulp.src(['src/Hoppla.Deployer.Agent/bin/Release/*Agent.exe',
+        'src/Hoppla.Deployer.Agent/bin/Release/*.dll',
+        'src/Hoppla.Deployer.Agent/bin/Release/Resources/*'])
 		.pipe(zip('artifact.zip'))
 		.pipe(gulp.dest('dist'));
 });

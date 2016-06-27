@@ -49,7 +49,8 @@ namespace Hoppla.Deployer.Agent
 
                 if (actionBundleExecutionResults.Any())
                 {
-                    var emailBody = Razor.Parse(Properties.Resource.StatusEmail, new EmailViewModel(actionBundleExecutionResults));
+                    var emailTemplate = File.ReadAllText("EmailTemplate.cshtml");
+                    var emailBody = Razor.Parse(emailTemplate, new EmailViewModel(actionBundleExecutionResults));
                     emailService.SendMail(applicationConfiguration.ReportEmailFromAdress, applicationConfiguration.ReportEmailRecipientAdress, "Deployment Report", emailBody);
 
                 }
