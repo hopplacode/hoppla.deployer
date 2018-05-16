@@ -11,6 +11,7 @@ namespace Hoppla.Deployer.Agent.Services
     {
         void SendMail(string sender, string reciever, string subject, string body);
         string CreateBody(string test);
+        string FormatSubject(string environment, int numOfSuccess, int numOfBundles);
     }
 
     public class EmailService : IEmailService
@@ -47,6 +48,11 @@ namespace Hoppla.Deployer.Agent.Services
         public string CreateBody(string test)
         {
             return test;
+        }
+
+        public string FormatSubject(string environment, int numSuccessBundles, int numOfBundles)
+        {
+            return string.Format("[{0}] {1}/{2} successfully deployed.", environment, numSuccessBundles, numOfBundles);
         }
 
     }

@@ -17,6 +17,7 @@ namespace Hoppla.Deployer.Agent
             LogFilePath = ConfigurationManager.AppSettings["LogFilePath"];
             ReportEmailRecipientAdress = ConfigurationManager.AppSettings["ReportEmailRecipientAdress"];
             ReportEmailFromAdress = ConfigurationManager.AppSettings["ReportEmailFromAdress"];
+            Environment = ConfigurationManager.AppSettings["Environment"];
 
             // Global configs
             ReleaseHistoryPath = string.Format("{0}\\{1}", WorkingDirectory, "ReleaseHistory");
@@ -70,6 +71,7 @@ namespace Hoppla.Deployer.Agent
         public string LogFilePath { get; set; }
         public string ReportEmailRecipientAdress { get; set; }
         public string ReportEmailFromAdress { get; set; }
+        public string Environment { get; set; }
     }
 
     public class DeploymentPackageConfiguration
@@ -98,16 +100,17 @@ namespace Hoppla.Deployer.Agent
             else
                 throw new ConfigurationException(string.Format("Configuration error for key TargetPath. Specified in {0}.config", Name));
 
+            if (settings["EntryPointAssemblyFileNameConfigExtension"] != null)
+                EntryPointAssemblyFileNameConfigExtension = settings["EntryPointAssemblyFileNameConfigExtension"].Value;
+            else
+                throw new ConfigurationException(string.Format("Configuration error for key EntryPointAssemblyFileNameConfigExtension. Specified in {0}.config", Name));
+
             try
             {
                 Name = Path.GetFileNameWithoutExtension(ZipFilePath).Split('.')[1];
 
                 var tempEntryPointAssemblyFileName = Name.Replace("_", ".");
-                if (DeploymentType == DeploymentTypeEnum.IISSite)
-                    tempEntryPointAssemblyFileName += ".dll";
-                else
-                    tempEntryPointAssemblyFileName += ".exe";
-                EntryPointAssemblyFileName = tempEntryPointAssemblyFileName;
+                EntryPointAssemblyFileName = tempEntryPointAssemblyFileName + EntryPointAssemblyFileNameConfigExtension;
 
                 var datePart = Path.GetFileNameWithoutExtension(ZipFilePath).Split('.')[2];
                 try
@@ -141,6 +144,7 @@ namespace Hoppla.Deployer.Agent
         public string TargetPath { get; private set; }
         public string ZipFilePath { get; private set; }
         public string EntryPointAssemblyFileName { get; private set; }
+        public string EntryPointAssemblyFileNameConfigExtension { get; private set; }
         public DateTime Date { get; private set; }
     }
 }

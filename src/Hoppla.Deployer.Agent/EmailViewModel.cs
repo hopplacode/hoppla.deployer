@@ -15,6 +15,7 @@ namespace Hoppla.Deployer.Agent
         public List<ActionBundleExecutionResult> ActionBundleExecutionResults { get; set; }
         public int NumOfFailedBundles { get { return ActionBundleExecutionResults.Count(x => x.Success == false); } }
         public int NumSuccessBundles { get { return ActionBundleExecutionResults.Count(x => x.Success == true); } }
+        public int NumOfBundles { get { return ActionBundleExecutionResults.Count; } }
         public DateTime DeployedFinished { get { return DateTime.Now; } }
         public string CssMedia { get { return "@media"; } }
         public string CssAtChar { get { return "@"; } }

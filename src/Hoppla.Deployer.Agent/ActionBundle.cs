@@ -83,6 +83,16 @@ namespace Hoppla.Deployer.Agent
                     }
                 case DeploymentTypeEnum.WindowsService:
                     {
+                        var serviceName = config.Settings["WindowsServiceName"].Value;
+                        bundle.AddAction(new StopWindowsServiceAction(serviceName));
+                        bundle.AddAction(new BackupCurrentReleaseDirectoryAction(config.Name, config.TargetPath, config.ReleaseBackupPath));
+                        bundle.AddAction(new DeleteDirectoryContentAction(config.TargetPath, "Delete current release"));
+                        bundle.AddAction(new ExtractDirectoryAction(config.ZipFilePath, config.TargetPath, "Extract new release"));
+                        bundle.AddAction(new ApplyTargetEnvironmentConfigAction(config.DeploymentType, config.TargetEnvironment, config.TargetPath, config.EntryPointAssemblyFileName));
+                        bundle.AddAction(new MoveDeliveryObjectToReleaseHistoryAction(config.ZipFilePath, config.ReleaseHistoryPath));
+                        bundle.AddAction(new StartWindowsServiceAction(serviceName));
+                        bundle.AddAction(new AfterDeploymentMethodAction(config));
+                        bundle.AddAction(new ReleaseNotesAction(config));
                         break;
                     }
                 default:
@@ -123,13 +133,23 @@ namespace Hoppla.Deployer.Agent
                         bundle.AddAction(new DeleteDirectoryContentAction(config.TargetPath, "Delete current release"));
                         bundle.AddAction(new ExtractDirectoryAction(config.ZipFilePath, config.TargetPath, "Extract new release"));
                         bundle.AddAction(new ApplyTargetEnvironmentConfigAction(config.DeploymentType, config.TargetEnvironment, config.TargetPath, config.EntryPointAssemblyFileName));
-                        //bundle.AddAction(new MoveDeliveryObjectToReleaseHistoryAction(config.ZipFilePath, config.ReleaseHistoryPath));
+                        /**/bundle.AddAction(new MoveDeliveryObjectToReleaseHistoryAction(config.ZipFilePath, config.ReleaseHistoryPath));
                         bundle.AddAction(new AfterDeploymentMethodAction(config));
                         bundle.AddAction(new ReleaseNotesAction(config));
                         break;
                     }
                 case DeploymentTypeEnum.WindowsService:
                     {
+                        var serviceName = config.Settings["WindowsServiceName"].Value;
+                        bundle.AddAction(new StopWindowsServiceAction(serviceName));
+                        /**/bundle.AddAction(new BackupCurrentReleaseDirectoryAction(config.Name, config.TargetPath, config.ReleaseBackupPath));
+                        bundle.AddAction(new DeleteDirectoryContentAction(config.TargetPath, "Delete current release"));
+                        bundle.AddAction(new ExtractDirectoryAction(config.ZipFilePath, config.TargetPath, "Extract new release"));
+                        bundle.AddAction(new ApplyTargetEnvironmentConfigAction(config.DeploymentType, config.TargetEnvironment, config.TargetPath, config.EntryPointAssemblyFileName));
+                        /**/bundle.AddAction(new MoveDeliveryObjectToReleaseHistoryAction(config.ZipFilePath, config.ReleaseHistoryPath));
+                        bundle.AddAction(new StartWindowsServiceAction(serviceName));
+                        bundle.AddAction(new AfterDeploymentMethodAction(config));
+                        bundle.AddAction(new ReleaseNotesAction(config));
                         break;
                     }
                 default:

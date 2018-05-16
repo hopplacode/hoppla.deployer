@@ -50,9 +50,10 @@ namespace Hoppla.Deployer.Agent
                 if (actionBundleExecutionResults.Any())
                 {
                     var emailTemplate = File.ReadAllText("EmailTemplate.cshtml");
-                    var emailBody = Razor.Parse(emailTemplate, new EmailViewModel(actionBundleExecutionResults));
-                    emailService.SendMail(applicationConfiguration.ReportEmailFromAdress, applicationConfiguration.ReportEmailRecipientAdress, "Deployment Report", emailBody);
-
+                    var emailVm = new EmailViewModel(actionBundleExecutionResults);
+                    var emailBody = Razor.Parse(emailTemplate, emailVm);
+                    var subject = emailService.FormatSubject(applicationConfiguration.Environment, emailVm.NumSuccessBundles, emailVm.NumOfBundles);
+                    emailService.SendMail(applicationConfiguration.ReportEmailFromAdress, applicationConfiguration.ReportEmailRecipientAdress, subject, emailBody);
                 }
             }
             catch (Exception ex)

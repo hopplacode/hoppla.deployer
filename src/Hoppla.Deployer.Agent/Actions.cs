@@ -11,6 +11,7 @@ using Hoppla.Deployer.Agent.Services;
 using System.Net;
 using System.Reflection;
 using System.Net.Http;
+using System.ServiceProcess;
 
 namespace Hoppla.Deployer.Agent
 {
@@ -61,7 +62,7 @@ namespace Hoppla.Deployer.Agent
 
     }
 
-    public class BackupCurrentReleaseDirectoryAction : ActionBase 
+    public class BackupCurrentReleaseDirectoryAction : ActionBase
     {
         string _sourceDir;
         string _targetDir;
@@ -76,7 +77,7 @@ namespace Hoppla.Deployer.Agent
 
         public override ActionExecutionResult Execute()
         {
-             
+
             using (ZipFile zip = new ZipFile())
             {
                 zip.AddDirectory(_sourceDir);
@@ -239,6 +240,72 @@ namespace Hoppla.Deployer.Agent
                 throw new ApplicationException("Could not find website!");
             }
             return new ActionExecutionResult(base.GetActionName(), true);
+        }
+    }
+
+    public class StopWindowsServiceAction : ActionBase
+    {
+        string _serviceName;
+        public StopWindowsServiceAction(string serviceName)
+        {
+            _serviceName = serviceName;
+        }
+
+        public override ActionExecutionResult Execute()
+        {
+            try
+            {
+                var service = new ServiceController(_serviceName);
+                var timeout = TimeSpan.FromMilliseconds(20000);
+
+                if (!service.CanStop)
+                {
+                    throw new ApplicationException(string.Format("Could not stop the windows service! Status is: {0}", service.Status.Humanize()));
+                }
+                else
+                {
+                    service.Stop();
+                    service.WaitForStatus(ServiceControllerStatus.Stopped, timeout);
+                }
+            }
+            catch(Exception ex)
+            {
+                throw new ApplicationException(string.Format("Could not stop the windows service: {0}", _serviceName), ex);
+            }
+            return new ActionExecutionResult(base.GetActionName(), true) { DebugInformation = string.Format("Windows service: {0} stopped", _serviceName) };
+        }
+    }
+
+    public class StartWindowsServiceAction : ActionBase
+    {
+        string _serviceName;
+        public StartWindowsServiceAction(string serviceName)
+        {
+            _serviceName = serviceName;
+        }
+
+        public override ActionExecutionResult Execute()
+        {
+            try
+            {
+                var service = new ServiceController(_serviceName);
+                var timeout = TimeSpan.FromMilliseconds(20000);
+
+                if (service.Status == ServiceControllerStatus.Running)
+                {
+                    throw new ApplicationException(string.Format("The service: {0}, is already running!", _serviceName));
+                }
+                else
+                {
+                    service.Start();
+                    service.WaitForStatus(ServiceControllerStatus.Running, timeout);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new ApplicationException(string.Format("Could not start the windows service: {0}", _serviceName), ex);
+            }
+            return new ActionExecutionResult(base.GetActionName(), true) { DebugInformation = string.Format("Windows service: {0} started", _serviceName) };
         }
     }
 
