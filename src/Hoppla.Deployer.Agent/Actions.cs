@@ -174,7 +174,7 @@ namespace Hoppla.Deployer.Agent
             {
                 _targetDirPath = _targetDirPath.TrimEnd('\\');
                 var fileName = Path.GetFileNameWithoutExtension(_sourcePath);
-                var targetPath = string.Format("{0}\\{1}_{2}.zip", _targetDirPath, fileName, DateTime.Now.ToString("HH_mm_ss"));
+                var targetPath = string.Format("{0}\\{1}_{2}.zip", _targetDirPath, fileName, DateTime.Now.ToString("yyyy-MM-dd HH_mm_ss"));
                 File.Move(_sourcePath, targetPath);
             }
             catch (Exception)
@@ -200,7 +200,12 @@ namespace Hoppla.Deployer.Agent
             var site = server.Sites.FirstOrDefault(s => s.Name == _siteName);
             if (site == null)
             {
-                throw new ApplicationException("Could not find website!");
+                var message = string.Format("Could not find website '{0}' among sites ", _siteName);
+                foreach(var item in server.Sites)
+                {
+                    message += string.Format("'{0}', ", item.Name);
+                }
+                throw new ApplicationException(message);
             }
             else
             {
@@ -232,12 +237,12 @@ namespace Hoppla.Deployer.Agent
                 site.Start();
                 if (site.State == ObjectState.Stopped)
                 {
-                    throw new ApplicationException("Could not start website!");
+                    throw new ApplicationException("Could not start website.");
                 }
             }
             else
             {
-                throw new ApplicationException("Could not find website!");
+                throw new ApplicationException(string.Format("Could not find website '{0}'.", _siteName));
             }
             return new ActionExecutionResult(base.GetActionName(), true);
         }
@@ -260,7 +265,7 @@ namespace Hoppla.Deployer.Agent
 
                 if (!service.CanStop)
                 {
-                    throw new ApplicationException(string.Format("Could not stop the windows service! Status is: {0}", service.Status.Humanize()));
+                    throw new ApplicationException(string.Format("Could not stop the windows service. Status is: {0}", service.Status.Humanize()));
                 }
                 else
                 {
@@ -293,7 +298,7 @@ namespace Hoppla.Deployer.Agent
 
                 if (service.Status == ServiceControllerStatus.Running)
                 {
-                    throw new ApplicationException(string.Format("The service: {0}, is already running!", _serviceName));
+                    throw new ApplicationException(string.Format("The service: {0}, is already running.", _serviceName));
                 }
                 else
                 {
